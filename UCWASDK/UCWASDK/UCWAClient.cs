@@ -1199,15 +1199,7 @@ namespace Microsoft.Skype.UCWA
                 HttpResponseMessage response = null;
                 try
                 {
-                    try
-                    {
-                        response = await client.GetAsync(Settings.IsOffice365PublicTenant ? $"https://webdir.online.lync.com/Autodiscover/AutodiscoverService.svc/root?originalDomain={Settings.Tenant}" : $"https://lyncdiscoverinternal.{Settings.Tenant}");
-                    }
-                    catch
-                    {
-                        // request externally if internal discovery fails
-                        response = await client.GetAsync($"https://lyncdiscover.{Settings.Tenant}");
-                    }
+                    response = await client.GetAsync(Settings.IsOffice365PublicTenant ? $"https://webdir.online.lync.com/Autodiscover/AutodiscoverService.svc/root?originalDomain={Settings.Tenant}" : Settings.Tenant);
                 }
                 catch (HttpRequestException hex)
                 {
@@ -1216,7 +1208,7 @@ namespace Microsoft.Skype.UCWA
                     {
                         if (ex.GetType().Name == "AuthenticationException")
                         {
-                            response = await client.GetAsync($"http://lyncdiscover.{Settings.Tenant}");
+                            response = await client.GetAsync(Settings.Tenant);
                             break;
                         }
                         ex = ex.InnerException;
